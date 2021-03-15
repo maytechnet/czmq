@@ -2579,6 +2579,34 @@ boolean my_zsock.hasIn ()
 Check whether the socket has available message to read.
 
 ```
+integer my_zsock.priority ()
+```
+
+Get socket option `priority`.
+Available from libzmq 4.3.0.
+
+```
+nothing my_zsock.setPriority (Number)
+```
+
+Set socket option `priority`.
+Available from libzmq 4.3.0.
+
+```
+integer my_zsock.reconnectStop ()
+```
+
+Get socket option `reconnect_stop`.
+Available from libzmq 4.3.0.
+
+```
+nothing my_zsock.setReconnectStop (Number)
+```
+
+Set socket option `reconnect_stop`.
+Available from libzmq 4.3.0.
+
+```
 nothing my_zsock.setOnlyFirstSubscribe (Number)
 ```
 
@@ -4035,7 +4063,7 @@ string my_zsys.sprintfHint (Number, String)
 
 Format a string using printf formatting, returning a freshly allocated
 buffer. If there was insufficient memory, returns NULL. Free the returned
-string using zstr_free(). The hinted version allows to optimize by using
+string using zstr_free(). The hinted version allows one to optimize by using
 a larger starting buffer size (known to/assumed by the developer) and so
 avoid reallocations.
 
@@ -4132,6 +4160,22 @@ Note that this method is valid only before any socket is created.
 
 ```
 integer my_zsys.threadNamePrefix ()
+```
+
+Return thread name prefix.
+
+```
+nothing my_zsys.setThreadNamePrefixStr (String)
+```
+
+Configure the numeric prefix to each thread created for the internal
+context's thread pool. This option is only supported on Linux.
+If the environment variable ZSYS_THREAD_NAME_PREFIX_STR is defined, that
+provides the default.
+Note that this method is valid only before any socket is created.
+
+```
+string my_zsys.threadNamePrefixStr ()
 ```
 
 Return thread name prefix.
@@ -5074,6 +5118,29 @@ string my_zosc.format ()
 ```
 
 Return the OSC format of the message.
+  i - 32bit integer
+  h - 64bit integer
+  f - 32bit floating point number (IEEE)
+  d - 64bit (double) floating point number
+  s - string (NULL terminated)
+  t = timetag: an OSC timetag in NTP format (uint64_t)
+  S - symbol
+  c - char
+  m - 4 byte midi packet (8 digits hexadecimal)
+  T - TRUE (no value required)
+  F - FALSE (no value required)
+  N - NIL (no value required)
+  I - Impulse (for triggers) or INFINITUM (no value required)
+  b - binary blob
+
+```
+integer my_zosc.append (String)
+```
+
+Append data to the osc message. The format describes the data that
+needs to be appended in the message. This essentially relocates all
+data!
+The format type tags are as follows:
   i - 32bit integer
   h - 64bit integer
   f - 32bit floating point number (IEEE)

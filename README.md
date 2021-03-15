@@ -33,6 +33,8 @@
 *  [Using CMake](#using-cmake)
 *  [Using MSBuild (Out of date, may not work now!)](#using-msbuild-out-of-date-may-not-work-now)
 
+**[Building for iOS](#building-for-ios)**
+
 **[Linking with an Application](#linking-with-an-application)**
 
 **[Use from Other Languages](#use-from-other-languages)**
@@ -327,6 +329,9 @@ Let's test by running `czmq_selftest`:
     :: select your choice and run it
     czmq\builds\msvc\vs2013\x64\ReleaseDEXE\czmq_selftest.exe
 ```
+### Building for iOS
+
+Static libraries can be compiled for iOS, some scripts to do so can be found at: https://github.com/crcunningham/zeromq_ios_libraries.
 
 ### Linking with an Application
 
@@ -7089,7 +7094,7 @@ This is the class self test code:
     zproc_set_env (self, &env);
     
     // execute the binary. It runs in own actor, which monitor the process and
-    // pass data accross pipes and zeromq sockets
+    // pass data across pipes and zeromq sockets
     if (verbose)
         zsys_debug("zproc_test() : launching helper '%s'", file );
     zproc_run (self);

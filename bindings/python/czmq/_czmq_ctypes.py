@@ -5261,6 +5261,14 @@ lib.zsock_resolve.restype = c_void_p
 lib.zsock_resolve.argtypes = [c_void_p]
 lib.zsock_has_in.restype = c_bool
 lib.zsock_has_in.argtypes = [zsock_p]
+lib.zsock_priority.restype = c_int
+lib.zsock_priority.argtypes = [zsock_p]
+lib.zsock_set_priority.restype = None
+lib.zsock_set_priority.argtypes = [zsock_p, c_int]
+lib.zsock_reconnect_stop.restype = c_int
+lib.zsock_reconnect_stop.argtypes = [zsock_p]
+lib.zsock_set_reconnect_stop.restype = None
+lib.zsock_set_reconnect_stop.argtypes = [zsock_p, c_int]
 lib.zsock_set_only_first_subscribe.restype = None
 lib.zsock_set_only_first_subscribe.argtypes = [zsock_p, c_int]
 lib.zsock_set_hello_msg.restype = None
@@ -6087,6 +6095,34 @@ return the supplied value. Takes a polymorphic socket reference.
         Check whether the socket has available message to read.
         """
         return lib.zsock_has_in(self._as_parameter_)
+
+    def priority(self):
+        """
+        Get socket option `priority`.
+Available from libzmq 4.3.0.
+        """
+        return lib.zsock_priority(self._as_parameter_)
+
+    def set_priority(self, priority):
+        """
+        Set socket option `priority`.
+Available from libzmq 4.3.0.
+        """
+        return lib.zsock_set_priority(self._as_parameter_, priority)
+
+    def reconnect_stop(self):
+        """
+        Get socket option `reconnect_stop`.
+Available from libzmq 4.3.0.
+        """
+        return lib.zsock_reconnect_stop(self._as_parameter_)
+
+    def set_reconnect_stop(self, reconnect_stop):
+        """
+        Set socket option `reconnect_stop`.
+Available from libzmq 4.3.0.
+        """
+        return lib.zsock_set_reconnect_stop(self._as_parameter_, reconnect_stop)
 
     def set_only_first_subscribe(self, only_first_subscribe):
         """
@@ -7547,6 +7583,10 @@ lib.zsys_set_thread_name_prefix.restype = None
 lib.zsys_set_thread_name_prefix.argtypes = [c_int]
 lib.zsys_thread_name_prefix.restype = c_int
 lib.zsys_thread_name_prefix.argtypes = []
+lib.zsys_set_thread_name_prefix_str.restype = None
+lib.zsys_set_thread_name_prefix_str.argtypes = [c_char_p]
+lib.zsys_thread_name_prefix_str.restype = c_char_p
+lib.zsys_thread_name_prefix_str.argtypes = []
 lib.zsys_thread_affinity_cpu_add.restype = None
 lib.zsys_thread_affinity_cpu_add.argtypes = [c_int]
 lib.zsys_thread_affinity_cpu_remove.restype = None
@@ -7853,7 +7893,7 @@ number into provided fields, providing reference isn't null in each case.
         """
         Format a string using printf formatting, returning a freshly allocated
 buffer. If there was insufficient memory, returns NULL. Free the returned
-string using zstr_free(). The hinted version allows to optimize by using
+string using zstr_free(). The hinted version allows one to optimize by using
 a larger starting buffer size (known to/assumed by the developer) and so
 avoid reallocations.
         """
@@ -8012,6 +8052,24 @@ Note that this method is valid only before any socket is created.
         Return thread name prefix.
         """
         return lib.zsys_thread_name_prefix()
+
+    @staticmethod
+    def set_thread_name_prefix_str(prefix):
+        """
+        Configure the numeric prefix to each thread created for the internal
+context's thread pool. This option is only supported on Linux.
+If the environment variable ZSYS_THREAD_NAME_PREFIX_STR is defined, that
+provides the default.
+Note that this method is valid only before any socket is created.
+        """
+        return lib.zsys_set_thread_name_prefix_str(prefix)
+
+    @staticmethod
+    def thread_name_prefix_str():
+        """
+        Return thread name prefix.
+        """
+        return lib.zsys_thread_name_prefix_str()
 
     @staticmethod
     def thread_affinity_cpu_add(cpu):
@@ -9495,6 +9553,8 @@ lib.zosc_address.restype = c_char_p
 lib.zosc_address.argtypes = [zosc_p]
 lib.zosc_format.restype = c_char_p
 lib.zosc_format.argtypes = [zosc_p]
+lib.zosc_append.restype = c_int
+lib.zosc_append.argtypes = [zosc_p, c_char_p]
 lib.zosc_retr.restype = c_int
 lib.zosc_retr.argtypes = [zosc_p, c_char_p]
 lib.zosc_dup.restype = zosc_p
@@ -9678,6 +9738,29 @@ The format type tags are as follows:
   b - binary blob
         """
         return lib.zosc_format(self._as_parameter_)
+
+    def append(self, format, *args):
+        """
+        Append data to the osc message. The format describes the data that
+needs to be appended in the message. This essentially relocates all
+data!
+The format type tags are as follows:
+  i - 32bit integer
+  h - 64bit integer
+  f - 32bit floating point number (IEEE)
+  d - 64bit (double) floating point number
+  s - string (NULL terminated)
+  t = timetag: an OSC timetag in NTP format (uint64_t)
+  S - symbol
+  c - char
+  m - 4 byte midi packet (8 digits hexadecimal)
+  T - TRUE (no value required)
+  F - FALSE (no value required)
+  N - NIL (no value required)
+  I - Impulse (for triggers) or INFINITUM (no value required)
+  b - binary blob
+        """
+        return lib.zosc_append(self._as_parameter_, format, *args)
 
     def retr(self, format, *args):
         """

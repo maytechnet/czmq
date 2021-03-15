@@ -2759,6 +2759,26 @@ void *
 bool
     zsock_has_in (void *self);
 
+// Get socket option `priority`.
+// Available from libzmq 4.3.0.
+int
+    zsock_priority (void *self);
+
+// Set socket option `priority`.
+// Available from libzmq 4.3.0.
+void
+    zsock_set_priority (void *self, int priority);
+
+// Get socket option `reconnect_stop`.
+// Available from libzmq 4.3.0.
+int
+    zsock_reconnect_stop (void *self);
+
+// Set socket option `reconnect_stop`.
+// Available from libzmq 4.3.0.
+void
+    zsock_set_reconnect_stop (void *self, int reconnect_stop);
+
 // Set socket option `only_first_subscribe`.
 // Available from libzmq 4.3.0.
 void
@@ -3822,7 +3842,7 @@ void
 
 // Format a string using printf formatting, returning a freshly allocated
 // buffer. If there was insufficient memory, returns NULL. Free the returned
-// string using zstr_free(). The hinted version allows to optimize by using
+// string using zstr_free(). The hinted version allows one to optimize by using
 // a larger starting buffer size (known to/assumed by the developer) and so
 // avoid reallocations.
 char *
@@ -3933,6 +3953,18 @@ void
 // Return thread name prefix.
 int
     zsys_thread_name_prefix (void);
+
+// Configure the numeric prefix to each thread created for the internal
+// context's thread pool. This option is only supported on Linux.
+// If the environment variable ZSYS_THREAD_NAME_PREFIX_STR is defined, that
+// provides the default.
+// Note that this method is valid only before any socket is created.
+void
+    zsys_set_thread_name_prefix_str (const char *prefix);
+
+// Return thread name prefix.
+const char *
+    zsys_thread_name_prefix_str (void);
 
 // Adds a specific CPU to the affinity list of the ZMQ context thread pool.
 // This option is only supported on Linux.
@@ -4659,6 +4691,27 @@ const char *
 //   b - binary blob
 const char *
     zosc_format (zosc_t *self);
+
+// Append data to the osc message. The format describes the data that
+// needs to be appended in the message. This essentially relocates all
+// data!
+// The format type tags are as follows:
+//   i - 32bit integer
+//   h - 64bit integer
+//   f - 32bit floating point number (IEEE)
+//   d - 64bit (double) floating point number
+//   s - string (NULL terminated)
+//   t = timetag: an OSC timetag in NTP format (uint64_t)
+//   S - symbol
+//   c - char
+//   m - 4 byte midi packet (8 digits hexadecimal)
+//   T - TRUE (no value required)
+//   F - FALSE (no value required)
+//   N - NIL (no value required)
+//   I - Impulse (for triggers) or INFINITUM (no value required)
+//   b - binary blob
+int
+    zosc_append (zosc_t *self, const char *format, ...);
 
 // Retrieve the values provided by the given format. Note that zosc_retr
 // creates the objects and the caller must destroy them when finished.
