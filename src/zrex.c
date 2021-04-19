@@ -162,6 +162,7 @@ zrex_matches (zrex_t *self, const char *text)
         char *hit_set_ptr = self->hit_set;
         for (index = 0; index < self->hits; index++) {
             memcpy (hit_set_ptr, self->caps [index].ptr, self->caps [index].len);
+            *(hit_set_ptr + self->caps [index].len) = '\0';
             self->hit [index] = hit_set_ptr;
             hit_set_ptr += self->caps [index].len + 1;
         }
